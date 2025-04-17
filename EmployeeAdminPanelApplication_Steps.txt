@@ -1,0 +1,923 @@
+||Shree||
+||Shri swami samartha||
+||Jay shankar baba||
+
+Steps to create  our app.
+
+1.Setup :
+ Setting Up the Development Environment
+ Ensure you have the following installed:
+
+    Visual Studio 2022 or later
+
+    .NET SDK 8.0 or later
+
+    SQL Server (LocalDB is sufficient for development)
+
+    Postman for API testing
+
+
+2.Creating the ASP.NET Core Web API Project for that do following things:   
+
+        1. Open Visual Studio and select "Create a new project".
+
+        2. Choose "ASP.NET Core Web API" and click Next.
+
+        3. Name your project (e.g.,EmployeeAdminPortal) and click Create.
+
+        4. In the next window, ensure:
+
+            NET 8.0 (Long-Term Support) is selected.
+
+        5.Authentication is set to None.
+
+        6. Click Create.
+
+
+3.Now we are goin to install some nuget packages for that do following things
+
+    i.inside the solution explorere there one folder named as "dependencies"
+    so right click on this folder and select "Manage nueget packages" option 
+
+    ii.Now left la tula ek nuget package manager chi window disel
+        a.tyamadhe var browse tab select kar.
+        b.aani khali search bar madhe 
+
+            note:khalil package install kartana tu jya dot net version cha use 
+            karun project create kela aahes tyach version che package install karayache.
+            yes we can do that there is option while installing the package to 
+            select he version of the package.
+
+
+            Microsoft.EntityFrameworkCore.Server 
+            
+            he search kar aani install kar version 8 wal.
+
+
+            ata.
+
+            Microsoft.EntityFrameworkCore.Tools 
+
+             he search kar aani install kar version 8 wal.
+
+        
+    iii.Now to check the pakackages installed successfully in the project then 
+    do following things.
+
+        a.  double click on  project folder name i.e.EmployeeAdminPortal
+            in solution explorer
+        b.Now see at left side ek file open hoil EmployeeAdminPortal navachi 
+            tar ya file madhe <ItemGroup>navachya tag madhe tula 
+            installed packages chi nave distil.jas apan node application madhe package.json 
+            madhe pahayacho na tas aahe ith.
+
+----
+4.Now lets create a Models for that do following things(ithe models mhanje kay re ki database madhil ekhadya table che structur tharavane/lihine)
+
+    4.1 right click on project folder name and select add>newfolder ya folder la Models 
+    he nav de aani ya Models folder madhe ek ajun ek folder create kar aani tyache nav
+    "Entities" he de.
+
+    4.2 Now right click on Entities folder > Add > Class 
+        give this class name as Employee.cs   //in this file we are going to implement or defiene a structure of Employee table in the database.
+
+    4.3 Now open this Employee.cs file and wrtie below code inside the class
+
+
+        public Guid Id { get; set; }
+        
+        public required string Name { get; set; }
+
+        public required  string Email { get; set; }
+        
+        public string? Phone { get; set; }                     
+        
+        public decimal Salary { get; set; }
+
+ithe var aapan fakta Employee table madhe konate konate 
+column asanare te define kele. i.e.Id,Name,Eamil,Phone,Salary etc 
+
+
+5.Now we are going to make a connection between Microsoft sql database and this application.
+    for that do following steps:
+    5.1.right click on EmployeeAdminPortal in solution explorere  select Add>New folder 
+    5.2 folder name la pudhil nav de "Data"
+    5.3 Now right click on Data folder select Add>Class 
+    5.4 Ya class la pudhil nav de 
+        ApplicationDbContext.cs 
+
+    5.5 Now open this file and do followign things in it.
+
+        a.write below import statements.
+
+            using Microsoft.EntityFrameworkCore;
+            using EmployeeAdminPortal.Models.Entities;
+
+
+        b.Now inherit DbContext in the class header as following
+
+          public class ApplicationDbContext:DbContext{
+            ...
+          } 
+
+        c.Now define followign constructor inside the class
+
+            public ApplicationDbContext(DbContextOptions options):base(options)
+            {
+            }
+
+        d.Now define following class variable below the constructor defintion
+
+              public DbSet<Employee> Employees { get; set;}
+
+            /*
+                    tar varil line ne aapan he milavato ki 
+                    ek Emloyees navacha table create kar aani tya Employee table 
+                    che structure Models/Entities/Employee.cs mahdil code nusar kar.
+            */
+
+5.6 Now open appsettings.json file and and tya madhe jo js object aahe tya js object madhe
+last la pudhil key value pair add kar.
+
+       "ConnectionStrings": 
+       {
+            "DefaultConnection": "Server=localhost\\SQLEXPRESS;Database=EmployeeDb;Trusted_Connection=True;TrustServerCertificate=true";
+        }                                   |                               |
+                                            |                               |
+                        varil string madhe ithe server name lihayache aani ithe jo database create karayacha aahe tya database che nav lihayche.
+
+
+        Note:varil url madhe pudhil variables pahijech 
+       1 Server 
+       2 Database
+       3 Trusted_Connection
+       4 TrustServerCertificate
+
+        aani varil url madhil database ya variable la ji value tu det aahet i.e database name jar ka ya navacha database created nasel 
+        tar to create kela jato else already exiting asel tar tya aleready existing database shi 
+        connect established kele jate.
+
+
+
+5.7 Now open Program.cs file and do following things in it.
+
+    i.wrtie below import statements in it.
+
+        using EmployeeAdminPortal.Data;
+        using Microsoft.EntityFrameworkCore;
+
+    ii.Now write below statements in it.( above the var app = builder.Build(); statement)
+
+    
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    );
+---
+
+5.8.Now select Tools>nueget pakackage manager>packagae manager console 
+now open console gets opend in the visual studio and hit following commands in it.
+
+    add-migration "inital migration"
+
+    update-database     
+
+5.9 Now open the sql server management studio
+
+on left side click on the database 
+
+inside this database folder you will see one database is created automatically 
+named as "employeeDb"
+
+
+
+22.00
+
+---
+6.Now we are going to implement or define the api which does crud operation on the database.
+For that do followign things.
+
+
+ i.right click on the controllers folder
+ 
+ii. select add option 
+
+iii.select controller option.
+
+iv.click on API option
+
+v.Now select API controller-Empty
+
+vi. now click on add button 
+
+vii. now give following name to the controller.
+
+    EmployeesController.cs
+
+viii.now open this EmployeesController.cs file and do following things in it.
+
+ix.ya file madhe tula ek class disle i.e EmployeesController so ya class chya body madhe 
+aaplyala actual api define karayachya aahet so write below code inside the class body.
+
+
+    a. 1st of all to access the data from the database we have to to following steps.
+
+        ai.define following class variable.
+
+               private readonly ApplicationDbContext dbContext;
+
+        aii.ai.define following constructor inside the class body.
+
+            public EmployeesController(ApplicationDbContext dbContext)
+            {
+                this.dbContext = dbContext;
+            }
+
+    ek lakshat thev shubham dbContext ya class variable cha vapar karun aapan 
+    database madhil data access karnar aahot.
+
+
+    b.Now its time to define a actual api for that write below code below
+      constructor definition.
+
+        [HttpGet]
+        public IActionResult GetEmployees()
+        {
+            var allEmployees= dbContext.Employees.ToList();
+            return Ok(allEmployees);
+        }
+
+------------------------------------------------------------------------
+Explanation:
+
+    varil api hi clinet la employees table madhil sagla data as a response mhanun dete in the form of array of js objects.
+
+    syntax explanation:
+    
+     [HttpGet]                     
+        public IActionResult GetEmployees()
+        {
+            var allEmployees= dbContext.Employees.ToList();
+            return Ok(allEmployees);
+        }
+
+
+    1.[HttpGet] is a type of api.
+    2.  var allEmployees= dbContext.Employees.ToList(); 
+    
+        yamadhe :
+        
+        dbContext.Emloyees.ToList();
+        yacha internally asa artha aahe 
+        ki 
+        select * from Employee 
+    3. return Ok(allEmployees);
+        this is the syntax that how we send the successful response with a data 
+        to the client.
+
+
+
+    hi api call karynyasathi aaplyala pudhil url hit karavi lagate "GET REQUEST MADHE" 
+
+    http://localhost:5297/api/Employees
+
+
+   Note: you will get the url of each and every api on the swagger when you run the application. 
+------------------------------------------------------------------------
+
+
+C.Now its time to test the application for that do follwoing things
+
+ ci.application la run kar varil right green arrow var click karun.
+
+ cii.now atta kay hoil ki browser open hoil tyamadhe swagger che ek api related
+ documnetation open hoil tyamadhe tula tu atta define kelelya get api 
+ che documnetation tula disel.
+
+ ciii.so tya swageer site var tya api div la expand kar try it out ya button var click kar.
+
+ civ.and execute button var click kar jenekarun automatically api related api hit keli jate
+  aani tya api cha response tula swgger var disato.ata tu jar ka api la call kela 
+  tar tula  [] asa emptyu response milel karan database madhe employee table madhe tas
+  kahi nahich aahe.
+
+cv.so atta kay kar manually data insert kar database madhe for that open sql server management studio
+and do followign things 
+
+    a.click on New Query option.
+    b.ata khali query panel madhe pudhil command aahe tyach sequence ne execute kar.
+
+        use EmployeeDb;          //to select the database
+
+
+        //now we are inserting a data into the Employees column.
+
+        INSERT INTO Employees (Id, Name, Email, Phone, Salary)
+        VALUES (NEWID(), 'Alice Johnson', 'alice.johnson@example.com', '555-1234', 65000.00);
+
+        INSERT INTO Employees (Id, Name, Email, Phone, Salary)
+        VALUES (NEWID(), 'Bob Smith', 'bob.smith@example.com', '555-5678', 72000.00);
+
+        INSERT INTO Employees (Id, Name, Email, Phone, Salary)
+        VALUES (NEWID(), 'Carol White', 'carol.white@example.com', NULL, 58000.00);
+
+        INSERT INTO Employees (Id, Name, Email, Phone, Salary)
+        VALUES (NEWID(), 'David Green', 'david.green@example.com', '555-4321', 83000.00);
+
+        INSERT INTO Employees (Id, Name, Email, Phone, Salary)
+        VALUES (NEWID(), 'Emma Brown', 'emma.brown@example.com', '555-8765', 71000.00);
+
+        INSERT INTO Employees (Id, Name, Email, Phone, Salary)
+        VALUES (NEWID(), 'Frank Moore', 'frank.moore@example.com', NULL, 50000.00);
+
+        INSERT INTO Employees (Id, Name, Email, Phone, Salary)
+        VALUES (NEWID(), 'Grace Lee', 'grace.lee@example.com', '555-0000', 90000.00);
+
+        INSERT INTO Employees (Id, Name, Email, Phone, Salary)
+        VALUES (NEWID(), 'Henry Adams', 'henry.adams@example.com', '555-9999', 63000.00);
+
+        INSERT INTO Employees (Id, Name, Email, Phone, Salary)
+        VALUES (NEWID(), 'Ivy Walker', 'ivy.walker@example.com', NULL, 77000.00);
+
+        INSERT INTO Employees (Id, Name, Email, Phone, Salary)
+        VALUES (NEWID(), 'Jack Taylor', 'jack.taylor@example.com', '555-2222', 88000.00);
+
+
+        //se view a data in the Employee table
+
+        select * from Employee
+
+
+    c.Now lets test the api open swagger documnetation and 
+    aplya get api cha div expand karun tyamadhe try it out var click kar aani mag execute var click kar.
+
+    ata response madhe tula employees table madhil sarva data aalela disel.
+
+    aala aala aala bhai khatarnak congratulation bhai..........
+
+
+
+--------------------------------------------------------------------------------------------------
+---
+7.Now we are going to define a api which add employee information in the database. for that do followin thing.
+
+ i.open Controllers/EmployeesController.cs for and do following things in it.
+
+    a.class body madhe varl get api chya body chya khali khalil api define kar.
+
+        tya addhi ek laksat ghe ki hi api client side karun body parameter accept karte
+        aani to allow to access the body parameter in this api body we have to do 
+        some setting in this .net application folder.so do followign steps:
+
+        sarvapratham aaplyalala ya api la as a body parameter mhanun yenarya js object cha type define karva lagto.
+
+        ai.write click on Models foler.
+        aii.select Add>class
+        aiii.give followign name to the class. 
+            AddEmployeeDto.cs file 
+
+        aiv.open this AddEmployeeDto.cs file and do following things in it.
+
+            i.write below code inside the class.
+                
+                    public required string Name { get; set; }
+
+                    public required  string Email { get; set; }
+                    
+                    public string? Phone { get; set; }
+                    
+                    public decimal Salary { get; set; }
+
+            yane aapan he sagat aahet ki client post request barobar jo 
+            body parameter patavato tya body parameter madhe i.e js object madhe 
+            varil key-value pair asatil.Phone hi key value pair optional aahe because of '?' mentioned
+            in above class.
+
+        b.Now lets define a post type chi api. Now open Controllers/EmployeesController.cs for and do following things in it.
+---
+    a.class body madhe varil get api chya body chya khali khalil api define kar.
+
+
+             //api to add the new employee  in Employee table 
+
+
+                [HttpPost]
+                public IActionResult AddEmployee(AddEmployeeDto addEmployeeDto)
+                {
+
+                    //logic to access the body parameters
+                    var employeeEntity = new Models.Entities.Employee()
+                    {
+                        Name = addEmployeeDto.Name,
+                        Email = addEmployeeDto.Email,
+                        Phone = addEmployeeDto.Phone,
+                        Salary = addEmployeeDto.Salary
+                    };
+
+
+                    // logic to insert a record in the Employee table.
+                    dbContext.Employees.Add(employeeEntity);
+                    dbContext.SaveChanges();
+
+                    //logic to send a response to the client
+                    return Ok(employeeEntity);
+                }
+
+
+---------------------------------------------------------------------------------------
+Explanation:
+
+     [HttpPost] : hi ek post type chi api aahe.
+
+     ek laksat thev shubham client jevha post request madhe 
+
+     localhost:___/api/Employees hi url hit karto tevha varil api call keli jate ata
+     api call keli jate mhanje kay tar  AddEmployee() navache function call kele jate 
+
+     aani client jo api chi url hit kartana je body parameter patavato i.e js object patavato to 
+     js object AddEmployee() function la as a parameter mhanun patavala jato.
+
+     parantu to body parameter accept karnyasthi aaplyala AddEmployee() function chya
+     parameter list madhe AddEmployeeDto addEmployeeDto asha user defined type cha parameter lihava lagato.
+
+                    //logic to access the body parameters in the body of api
+                    var employeeEntity = new Models.Entities.Employee()
+                    {
+                        Name = addEmployeeDto.Name,
+                        Email = addEmployeeDto.Email,
+                        Phone = addEmployeeDto.Phone,
+                        Salary = addEmployeeDto.Salary
+                    };
+
+    jar ka dbContext la table madhe ekhada js object add karayacha aahe 
+    tar tya sathi varil pramane aaplyala object banavava lagto.
+    and mag dbContext ha varil object jyamadhe data aahe to data 
+    employee tabale madhe store karu shakato.
+
+    i.e by using following syntax.
+
+     // logic to insert a record in the Employee table.
+        dbContext.Employees.Add(employeeEntity);
+        dbContext.SaveChanges();
+
+
+    //ata tuzhya ek manat ek shanka aali asel ki employee chya table madhe Id navacha column panel
+    aahe aani aapan fakta Name,email,Phone,Salary evadyach column chi value insert kart aahe
+    code through tar yach uttar asa aahe ki Appan Employee table chya model madhe 
+
+    Id hi property pudhil pramane define keli aahe 
+    i.e   public Guid Id { get; set; }
+    so employee table madhe codding thorugh data insert hotana ya Id columnchi value
+    automatically generate keli jate aani employee table madhe store keli jaate.
+
+    that's.it.
+
+    Ok(employeeEntity) :ya syntax ne aapan client la response patavala 
+    ok mhanun with status 200 and response barobar  employeeEntity ha table madhe inserted 
+    js object pan patavala.
+---------------------------------------------------------------------------------------------------
+39.00
+---
+
+Now we are going to define the api which fetch a specfic row from the column 
+based on the condition and send that row in the form of js object to the client.
+
+for that do followign thing:
+
+
+ i.open Controllers/EmployeesController.cs for and do following things in it.
+
+    a.class body madhe varil post api chya body chya khali khalil api define kar.
+
+
+    
+        //api to get a data of employee of specific id from the  Employee table 
+
+        [HttpGet]
+        [Route("{id:guid}")]
+        public IActionResult GetEmployeeById(Guid id)
+        {
+            Console.WriteLine(id); //to print a path paramert named as id
+
+            //logic to get a Employee row if specific id 
+           var emp= dbContext.Employees.Find(id);
+
+            if (emp == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(emp);
+
+            }
+
+
+        }
+
+
+    Explanation:
+    1. [HttpGet] it is a type of api
+
+    2.  Now in this api we are going to accepting the path parameter from the 
+        client,and we are going to access that parth paramert which 
+        is defined  in the url inside the body section of the api.
+        so to access the pathparameter in the url we have to do foloiwing steps
+
+        if we want to access the path parameter in the url then we have to do followin things:
+
+        1.api type chya khali 
+         [Route("{id:guid}")]
+        asa path parameter with its type defiene karaycha 
+
+        2.ya api chya paramer list madhe i.e GetEmployeeById() chya parameter list 
+        madhe pudhil parameter define karayacha.
+
+            Guid id
+
+     Note:Make sure ya parameter list madhala parameter che nav aani api type chya khali 
+     define kela path parameter che nav samechhhh pahije i.e id
+
+
+
+    3. Console.WriteLine(id); //to print a value of path paramert named as id
+
+    4. //logic to get a Employee row if specific id 
+           var emp= dbContext.Employees.Find(id);
+
+      
+        /*
+        dbContext.Employees.Find(id);  is a funtion which returns a specific data
+        from Employee column  
+        if exist and there is no specific row in the table then it returns null
+        */
+
+    5.return NotFound(); 
+            this is the way we can send the errornomous response to 
+            the client.
+
+    6. return Ok(emp); 
+
+        this is the way ti send a successful response to the client with data i.e emp
+
+
+7.Now its time to test the url for that
+    7.1 run the application by clicking on above green play icon 
+    7.2 Now in the swagger documnetation expand the div related to this api
+    7.3 tithe try out button var click kar.
+    7.4 tula tithe id parameter tul vicharatil tya mdhil input box madhe pudhil 
+    value lihi
+    C5E2F7C9-DAF5-4F55-F48D-08DD7DA8A9F5
+    7.5 Now click on execute
+
+    7.8 you will get followign response
+
+        {
+        "id": "c5e2f7c9-daf5-4f55-f48d-08dd7da8a9f5",
+        "name": "shubham",
+        "email": "shubham@gmail.com",
+        "phone": "9898989898",
+        "salary": 267777
+        }
+
+    7.9 yes we have done it bhai.
+    7.10 Now if you are testing this api using postman then you have to hit followign url in the 
+    url section
+    http://localhost:5297/api/Employees/C5E2F7C9-DAF5-4F55-F48D-08DD7DA8A9F5
+                                        |-ithe aapan path parameter chi value define keli.
+
+
+
+
+-------------------------------------------------------------------------------------------
+---
+now we are going implement api which update the employee details in the employee table.for that
+do followign steps
+
+ i.open Controllers/EmployeesController.cs for and do following things in it.
+
+    a.class body madhe varil get type api chya body chya khali khalil api define kar.
+
+    Now ek laskat ghe shubham hi ji api aahe 
+    Ti api, 
+    1.path parameter pan accept karte i.e id 
+    2.tasech body parameter pan accept karte.
+
+    so varil donhi prakarache parameters ya api chya 
+    body madhe access karnyasathi pudhil steps kar.
+
+    1.To acess the pathparameter in the url do following things:
+        
+        a.api type chya khali ek pudhil code lihi
+              [Route("{id:guid}")]
+        b.api chya parameter list madhe i.e UpdateEmloyee() chya 
+        parameter list madhe pudhil parameter lihi
+
+            Guid id 
+
+        that's it.
+        make sure api chya parameter list madhil parameter che nav aani 
+        api type chya khali define kelala variable i.e [Route("{id:guid}")]
+        che nav samech asavae i.e id
+
+    2.To access the body parameters in the body of api.for that do followign things.
+
+        a.create a dto class for that do followign steps
+        b.right click on the Models folder 
+        c.select Add>Class
+        d.Now give followign name to the class file
+
+            UpdateEmloyeeDto.cs
+
+        e.Now open this UpdateEmloyeeDto.cs file and inside the class write below code.
+
+            public required string Name { get; set; }
+
+            public required string Email { get; set; }
+
+            public string? Phone { get; set; }
+
+            public decimal Salary { get; set; } 
+
+        ithe kahi nahire aapan body parameter mhanun jo js 
+        object yenar aahe na tyachestructure define kele.
+
+        e.Now open Controllers/EmployeesController.cs file aani tyamadhe 
+        api chya parameter list madhe pudhil parameter add kar.
+
+            UpdateEmloyeeDto updateEmloyeeDto
+
+        that's it by using this updateEmloyeeDto parameter we can access
+        the data in the body parameter.
+
+
+    i.open Controllers/EmployeesController.cs for and do following things in it.
+        
+     class body madhe pudhil api define kar.
+
+            [HttpPut]
+            [Route("{id:guid}")]
+            public IActionResult UpdateEmployee(Guid id,UpdateEmloyeeDto updateEmloyeeDto)
+            {
+
+                //first we have to get employee of specific id
+                var employee=dbContext.Employees.Find(id);
+
+                if (employee == null) //if employee of this id is doesn't exist in employee table
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    //logic to update the employee details in the employee table 
+
+                    employee.Name = updateEmloyeeDto.Name;
+                    employee.Email = updateEmloyeeDto.Email;
+                    employee.Phone = updateEmloyeeDto.Phone;
+                    employee.Salary = updateEmloyeeDto.Salary;
+
+                    dbContext.SaveChanges();
+
+                    return Ok(employee);
+                
+
+
+                }
+
+            }
+------------------------------------------------------------------------------------------
+Explanation of above api:
+  
+  1. [HttpPut] :it is a api type
+  2. [Route("{id:guid}")] this for the access the pathparameter in the url.
+  3.  api parameters:
+        i.Guid id                               :to acces the path parameter in the body of this api
+        ii.UpdateEmloyeeDto updateEmloyeeDto    :to acces the body parameters in the body of this api
+  4.   var employee=dbContext.Employees.Find(id); 
+        //to get a employee of specific id
+        //actually here we are getting a reference of that row in employee table which has specfic id
+        //so jar ka me ya reference cha vapar karun kahi value update kelya tar tya actual db madhe hotil 
+        //tya mi pudhe kelya aahe. 
+
+   5.    if (employee == null) //if employee of this id is doesn't exist in employee table
+          {
+                    return NotFound();
+          }
+
+          jar ja table madhe ya specific id chi row nasel tar dbContext.Employees.Find(id) 
+          he function null return karte.
+
+    6. return NotFound(); : this is the way by using which we send erronimous 
+        response to client.
+
+    7. //logic to update the employee details in the employee table 
+
+                    //ithe nit laksha de aapan ithe reference cha vapar karun 
+                      row cha data update karat aahe.
+                    //updateEmloyeeDto.Name it means accessing a value of 
+                      Name key in the body parameter sent by the client with the put request 
+
+                    employee.Name = updateEmloyeeDto.Name;
+                    employee.Email = updateEmloyeeDto.Email;
+                    employee.Phone = updateEmloyeeDto.Phone;
+                    employee.Salary = updateEmloyeeDto.Salary;
+                    
+                    dbContext.SaveChanges(); //update table in database
+                    
+                    return Ok(employee); //send a success resposne with currently updated employee data.
+
+
+------------------------------------------------------------------------------------------
+ii.Now its time to test the url for that api or test the api 
+    7.1 run the application by clicking on above green play icon 
+    7.2 Now in the swagger documnetation expand the div related to this api
+    7.3 tithe try out button var click kar.
+    7.4 tula tithe id parameter tul vicharatil tya mdhil input box madhe pudhil 
+    value lihi
+    C5E2F7C9-DAF5-4F55-F48D-08DD7DA8A9F5
+    7.5 body parameter madhe pudhil data lihi jo update honar aahe.
+
+        {
+      
+        "name": "Ram",
+        "email": "Ram@gmail.com",
+        "phone": "9898989898",
+        "salary": 267777
+        }
+
+    7.6 now click on execute button you will get a response from api 
+    as
+        {
+        "id": "c5e2f7c9-daf5-4f55-f48d-08dd7da8a9f5",
+        "name": "Ram",
+        "email": "Ram@gmail.com",
+        "phone": "9898989898",
+        "salary": 267777
+        }
+    which is a updated row data in table.
+
+    7.9 yes we have done it bhai.
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+DELETE operation:
+
+
+Now we are going to implement a api which delete record from the employee table.
+Now we are goinf to delete a employee based on his or her id.
+
+lets do it .
+
+1.open Controllers/EmployeesController.cs for and do following things in it.
+    and define following api inside the class body.
+
+
+        //api for delete the employee of specific id
+
+            [HttpDelete]
+            [Route("{id:guid}")]
+            public IActionResult DeleteEmployee(Guid id) {
+
+                //first we have to get employee reference of specific id
+                var employee = dbContext.Employees.Find(id);
+
+                if (employee == null) //if employee of this id is doesn't exist in employee table
+                {
+                    return NotFound(); //sendig a errornomous 
+                }
+
+                else
+                {
+                        //logic to delete a row of specific id from employee in table
+                        dbContext.Employees.Remove(employee);
+                        dbContext.SaveChanges();
+
+                    return Ok(employee);
+
+
+                }
+
+            }
+
+-----------------------------------------------------------------------------------------
+Explanation:
+
+    1.  [HttpDelete] : it is api type
+    2.   [Route("{id:guid}")] : it for accessing a path parameter in api body
+    3.  parameter: Guid id : it for accessing a path parameter in api body
+    4. var employee = dbContext.Employees.Find(id); : for getting a employee row data of this id
+    
+    
+    5.  if (employee == null) //if employee of this id is doesn't exist in employee table
+        {
+                    return NotFound(); //sendig a errornomous 
+        }
+
+
+    6.logic to delete a row of specific id from employee in table
+
+                dbContext.Employees.Remove(employee);
+                dbContext.SaveChanges();
+
+     7.return Ok(employee); :sending a success response to  the client with deleted employee row data.
+    -----------------------------------------------------------------------------------------
+    *.Now its time to test the url for that api or test the api 
+    7.1 run the application by clicking on above green play icon 
+    7.2 Now in the swagger documnetation expand the div related to this api
+    7.3 tithe try out button var click kar.
+    7.4 tula tithe id parameter tul vicharatil tya mdhil input box madhe pudhil 
+    value lihi
+    C5E2F7C9-DAF5-4F55-F48D-08DD7DA8A9F5
+    7.5 click on execute button 
+
+    you will see in the employee table in the database that 
+    employee of id   C5E2F7C9-DAF5-4F55-F48D-08DD7DA8A9F5 is removed from the table.
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------
+Query Parameter:
+
+API which accepts a 2 query paramter as first name and last name for just understanding how to access 
+the query parameter in api body.
+
+     //normal api which accept a query parameter 
+     
+   [HttpGet]
+   [Route("byname")] //ya api chi url : localhost:3000/api/employees/byname?firstname=John&lastname=Doe ashi hote aani all shevati byname takal jate url madhe 
+    
+    public IActionResult GetByName([FromQuery] string firstname, [FromQuery] string lastname)
+    {
+        
+        //yamadhe query paramter direct parameter madhe stored aahet 
+        i.e firstname and lastname
+       
+        var fullName = $"{firstname} {lastname}";
+       
+        return Ok($"Hello, {fullName}!");
+    }
+
+
+Explanation:
+
+ 1. [HttpGet] :it is a api type
+
+ 2. [Route("byname")] yane aapan ya api chya default url chya shevati /byname lau shakato.
+
+ 3. api che parameters:
+    [FromQuery] string firstname, [FromQuery] string lastname
+
+    to accept and access the query parameter in the url in the body of this api.
+
+to call this api we have to hit following url in the get request
+
+http://localhost:5297/api/Employees/byname?firstname=shubham&lastname=mayane'
+                                    |-ithe aapan ha byname text 
+                                        [Route("byname")] he lihin lavala.
+
+
+
+
+------------------------------------------------------------------------------------------
+    ***Sending User defiend resposne:
+    //e.g. lets define or implement a api which sends a following js object as a response
+
+    {   
+        message:"user details is fetched successfully",
+        data:{
+                firstName:"shubham",
+                lastName:"mayane"
+            }
+    }
+
+    solution:
+
+   [HttpGet]
+   [Route("getUserDefinedResponse")] //ya api chi url : localhost:3000/api/employees/getUserDefinedResponse
+    
+    public IActionResult GetByName()
+    {
+        
+            var resObj = new
+            {
+                message = "user details is fetched successfully",
+                data = new
+                {
+                    firstName = "shubham",
+                    lastName = "mayane"
+                }
+            };
+       
+        return Ok(resObj);
+    }
+
+----------------------------------------------------------------
+
