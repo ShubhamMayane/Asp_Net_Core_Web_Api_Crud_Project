@@ -110,6 +110,26 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "EmployeeAdminPortal.Controllers.ProductsController",
+    "Method": "GetProducts",
+    "RelativePath": "api/Products/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EmployeeAdminPortal.Controllers.UserControllers.UserAuthenticationController",
+    "Method": "GetEmployees",
+    "RelativePath": "api/UserAuthentication/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "EmployeeAdminPortal.Controllers.WeatherForecastController",
     "Method": "Get",
     "RelativePath": "WeatherForecast",
